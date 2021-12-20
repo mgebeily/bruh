@@ -6,10 +6,11 @@
   "author": "Marc Gebeily",
   "license": "MIT",
   "bin": {
-    "bruh": "./dist/index.js"
+    "bruh": "./index.js"
   },
   "scripts": {
-    "start": "nodemon ./test.ts -e html,js,ts,scss,css,md --ignore dist"
+    "start": "nodemon ./test.ts -e html,js,ts,scss,css,md --ignore dist",
+    "linkglobal": "yarn global add file:$PWD"
   },
   "dependencies": {
     "@types/ejs": "^3.1.0",

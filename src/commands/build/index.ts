@@ -5,6 +5,7 @@ import ejs from 'ejs';
 import { marked } from 'marked';
 import path from "path";
 import sassPlugin from 'esbuild-plugin-sass';
+// @ts-ignore
 import { markdownPlugin } from 'esbuild-plugin-markdown';
 import { Route, Routes } from 'groute'
 

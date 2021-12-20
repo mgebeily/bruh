@@ -1,0 +1,11 @@
+{
+  "name": "bruh",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon ./test.ts -e html,js,ts,scss,css,md --ignore dist"
+  },
+  "dependencies": {
+    "bruh": "1.0.0"
+  }
+}
