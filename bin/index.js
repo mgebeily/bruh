@@ -6,5 +6,7 @@ var init_1 = require("./commands/init");
 // Initialize a project.
 // TODO: Do I need to compile this or can I just run as ts?
 commander_1.program.command("init")
+    .argument("Name")
     .description("Initialize a new project, bruh")
-    .action(init_1.init);
+    .action(function (name) { return (0, init_1.init)({ name: name }); });
+commander_1.program.parse(process.argv);

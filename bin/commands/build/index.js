@@ -50,6 +50,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.compile = void 0;
 var esbuild_1 = require("esbuild");
 var fs_1 = require("fs");
 var js_yaml_1 = __importDefault(require("js-yaml"));
@@ -60,19 +61,19 @@ var esbuild_plugin_sass_1 = __importDefault(require("esbuild-plugin-sass"));
 // @ts-ignore
 var esbuild_plugin_markdown_1 = require("esbuild-plugin-markdown");
 var buildData = function (base, directory) {
-    var files = fs_1.readdirSync(directory);
+    var files = (0, fs_1.readdirSync)(directory);
     var data = { files: [], paths: [], children: {} };
     files.forEach(function (file) {
         var location = path_1.default.join(directory, file);
-        if (fs_1.statSync(location).isDirectory()) {
-            var childPath = path_1.default.join('/', location).replace(path_1.default.normalize("/" + base), '');
+        if ((0, fs_1.statSync)(location).isDirectory()) {
+            var childPath = path_1.default.join('/', location).replace(path_1.default.normalize("/".concat(base)), '');
             // Recursively traverse directories
             data.children[path_1.default.basename(file)] = __assign({ path: childPath }, buildData(base, path_1.default.join(directory, file)));
             data.paths.push(childPath);
         }
         else if (path_1.default.extname(file) === '.json') {
             // Load the JSON file into data
-            var result = fs_1.readFileSync(location, 'utf-8');
+            var result = (0, fs_1.readFileSync)(location, 'utf-8');
             if (file === 'index.json') {
                 data = __assign(__assign({}, JSON.parse(result)), data);
             }
@@ -83,7 +84,7 @@ var buildData = function (base, directory) {
         }
         else if (path_1.default.extname(file) === '.yml') {
             // Load the YAML file into data and parse into an object
-            var result = js_yaml_1.default.load(fs_1.readFileSync(location, 'utf-8'));
+            var result = js_yaml_1.default.load((0, fs_1.readFileSync)(location, 'utf-8'));
             if (file === 'index.yml') {
                 // Spread the file at the root if it is index
                 data = __assign(__assign({}, JSON.parse(result)), data);
@@ -102,17 +103,17 @@ var buildDirectory = function (directory, plugins) { return __awaiter(void 0, vo
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                files = fs_1.readdirSync(directory);
+                files = (0, fs_1.readdirSync)(directory);
                 x = 0;
                 _a.label = 1;
             case 1:
                 if (!(x < files.length)) return [3 /*break*/, 7];
                 file = files[x];
                 location_1 = path_1.default.join(directory, file);
-                if (!fs_1.existsSync(path_1.default.join('dist', directory))) {
-                    fs_1.mkdirSync(path_1.default.join('dist', directory));
+                if (!(0, fs_1.existsSync)(path_1.default.join('dist', directory))) {
+                    (0, fs_1.mkdirSync)(path_1.default.join('dist', directory));
                 }
-                if (!fs_1.statSync(location_1).isDirectory()) return [3 /*break*/, 3];
+                if (!(0, fs_1.statSync)(location_1).isDirectory()) return [3 /*break*/, 3];
                 return [4 /*yield*/, buildDirectory(location_1, plugins)];
             case 2:
                 _a.sent();
@@ -120,7 +121,7 @@ var buildDirectory = function (directory, plugins) { return __awaiter(void 0, vo
             case 3:
                 if (!['.js', '.ts', '.scss', '.css'].includes(path_1.default.extname(location_1))) return [3 /*break*/, 5];
                 // TODO: Do not wait
-                return [4 /*yield*/, esbuild_1.build({
+                return [4 /*yield*/, (0, esbuild_1.build)({
                         bundle: true,
                         entryPoints: [location_1],
                         // TODO: Change to outfile?
@@ -137,11 +138,11 @@ var buildDirectory = function (directory, plugins) { return __awaiter(void 0, vo
                 return [3 /*break*/, 6];
             case 5:
                 if (path_1.default.extname(location_1) === '.md') {
-                    contents = fs_1.readFileSync(location_1, 'utf-8');
-                    fs_1.writeFileSync(path_1.default.join('dist', directory, 'index.html'), marked_1.marked(contents));
+                    contents = (0, fs_1.readFileSync)(location_1, 'utf-8');
+                    (0, fs_1.writeFileSync)(path_1.default.join('dist', directory, 'index.html'), (0, marked_1.marked)(contents));
                 }
                 else {
-                    fs_1.copyFileSync(location_1, path_1.default.join('dist', location_1));
+                    (0, fs_1.copyFileSync)(location_1, path_1.default.join('dist', location_1));
                 }
                 _a.label = 6;
             case 6:
@@ -153,32 +154,32 @@ var buildDirectory = function (directory, plugins) { return __awaiter(void 0, vo
 }); };
 var buildBundle = function (base, directory, data, directoryData) {
     if (directoryData === void 0) { directoryData = null; }
-    var files = fs_1.readdirSync(directory);
+    var files = (0, fs_1.readdirSync)(directory);
     var children = [];
     files.forEach(function (file) {
         var location = path_1.default.join(directory, file);
-        if (fs_1.statSync(location).isDirectory()) {
+        if ((0, fs_1.statSync)(location).isDirectory()) {
             // Add the contents of index.html to the current path
-            var html = fs_1.existsSync(path_1.default.join(location, 'index.html')) ?
-                fs_1.readFileSync(path_1.default.join(location, 'index.html'), 'utf-8') : '<%- yield %>';
-            var js = fs_1.existsSync(path_1.default.join(location, 'index.js')) ?
-                fs_1.readFileSync(path_1.default.join(location, 'index.js'), 'utf-8') : '';
-            var css = fs_1.existsSync(path_1.default.join(location, 'index.css')) ?
-                fs_1.readFileSync(path_1.default.join(location, 'index.css'), 'utf-8') : '';
+            var html = (0, fs_1.existsSync)(path_1.default.join(location, 'index.html')) ?
+                (0, fs_1.readFileSync)(path_1.default.join(location, 'index.html'), 'utf-8') : '<%- yield %>';
+            var js = (0, fs_1.existsSync)(path_1.default.join(location, 'index.js')) ?
+                (0, fs_1.readFileSync)(path_1.default.join(location, 'index.js'), 'utf-8') : '';
+            var css = (0, fs_1.existsSync)(path_1.default.join(location, 'index.css')) ?
+                (0, fs_1.readFileSync)(path_1.default.join(location, 'index.css'), 'utf-8') : '';
             // Recurse into the remaining values in the directory, defining the current template as the layout
             // TODO: Rebuild build once here by using the renderedHTML?
             // TODO: Incremental / stream / buffer
             var local = (directoryData || data).children[file];
             var childContent = buildBundle(base, location, data, local);
             // TODO: Make this predictably the name of the path?
-            var childOutletIdentifier = "a" + (Math.floor(Math.random() * 1000000) + 1);
-            var childOutlet = "<div id=\"" + childOutletIdentifier + "\"></div>";
+            var childOutletIdentifier = "a".concat(Math.floor(Math.random() * 1000000) + 1);
+            var childOutlet = "<div id=\"".concat(childOutletIdentifier, "\"></div>");
             // TODO: root and views?
             // TODO: Option for if yield with no further path is valid?
-            var renderedHtml = ejs_1.default.render(html, { yield: childOutlet, data: data, local: local }) + ("<style>" + css + "</style>");
+            var renderedHtml = ejs_1.default.render(html, { yield: childOutlet, data: data, local: local }) + "<style>".concat(css, "</style>");
             var route = {
                 path: file === base ? '' : file,
-                outlet: "#" + childOutletIdentifier,
+                outlet: "#".concat(childOutletIdentifier),
                 content: renderedHtml,
                 children: childContent,
             };
@@ -192,7 +193,7 @@ var buildBundle = function (base, directory, data, directoryData) {
 var inlineRequirements = function (directory) {
 };
 // TODO: One pass instead of two? This would limit the available data at any point.
-exports.compile = function (_a) {
+var compile = function (_a) {
     var _b = _a.entryPoint, entryPoint = _b === void 0 ? '' : _b;
     return __awaiter(void 0, void 0, void 0, function () {
         var data, dataPlugin, children, routes;
@@ -200,9 +201,9 @@ exports.compile = function (_a) {
             switch (_c.label) {
                 case 0:
                     // Create dist if it doesn't exist
-                    if (fs_1.existsSync('dist'))
-                        fs_1.rmdirSync('dist', { recursive: true });
-                    fs_1.mkdirSync('dist');
+                    if ((0, fs_1.existsSync)('dist'))
+                        (0, fs_1.rmdirSync)('dist', { recursive: true });
+                    (0, fs_1.mkdirSync)('dist');
                     data = buildData(entryPoint, entryPoint);
                     dataPlugin = {
                         name: 'bruh-data',
@@ -218,7 +219,7 @@ exports.compile = function (_a) {
                         }
                     };
                     // Build the lowest common denominator directories into dist. These are shared by the client and server side implementations.
-                    return [4 /*yield*/, buildDirectory(entryPoint, [dataPlugin, esbuild_plugin_markdown_1.markdownPlugin({}), esbuild_plugin_sass_1.default({
+                    return [4 /*yield*/, buildDirectory(entryPoint, [dataPlugin, (0, esbuild_plugin_markdown_1.markdownPlugin)({}), (0, esbuild_plugin_sass_1.default)({
                                 rootDir: process.cwd()
                             })])
                         // Build the client side bundle
@@ -232,8 +233,8 @@ exports.compile = function (_a) {
                             children: children,
                         }];
                     // TODO: Replace this with the file when build chunking is implemented
-                    fs_1.writeFileSync(path_1.default.join(process.cwd(), 'dist', 'client.js'), "\n    import { groute } from 'groute';\n    var functionize = (route) => {\n      if (route.children) {\n        route.children = route.children.map((c) => functionize(c));\n      }\n      if (route.onActivate) {\n        route.onActivate = new Function(route.onActivate);\n      }\n      return route;\n    }\n    groute(" + JSON.stringify(routes) + ".map((r) => functionize(r)))");
-                    esbuild_1.buildSync({
+                    (0, fs_1.writeFileSync)(path_1.default.join(process.cwd(), 'dist', 'client.js'), "\n    import { groute } from 'groute';\n    var functionize = (route) => {\n      if (route.children) {\n        route.children = route.children.map((c) => functionize(c));\n      }\n      if (route.onActivate) {\n        route.onActivate = new Function(route.onActivate);\n      }\n      return route;\n    }\n    groute(".concat(JSON.stringify(routes), ".map((r) => functionize(r)))"));
+                    (0, esbuild_1.buildSync)({
                         bundle: true,
                         entryPoints: [path_1.default.join(process.cwd(), 'dist', 'client.js')],
                         minify: true,
@@ -245,3 +246,4 @@ exports.compile = function (_a) {
         });
     });
 };
+exports.compile = compile;

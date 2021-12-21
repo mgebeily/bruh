@@ -10,7 +10,8 @@
   },
   "scripts": {
     "start": "nodemon ./test.ts -e html,js,ts,scss,css,md --ignore dist",
-    "linkglobal": "yarn global add file:$PWD"
+    "linkglobal": "yarn global add file:$PWD",
+    "bruh-local": "./index.js"
   },
   "dependencies": {
     "@types/ejs": "^3.1.0",
