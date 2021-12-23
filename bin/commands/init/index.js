@@ -6,14 +6,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.init = void 0;
 var fs_1 = require("fs");
 var path_1 = __importDefault(require("path"));
-var recursiveCopy = function (dir, name) {
-    for (var _i = 0, _a = (0, fs_1.readdirSync)(dir); _i < _a.length; _i++) {
+var recursiveCopy = function (sourceDirectory, targetDirectory, projectName) {
+    for (var _i = 0, _a = (0, fs_1.readdirSync)(sourceDirectory); _i < _a.length; _i++) {
         var file = _a[_i];
-        if ((0, fs_1.statSync)(file).isDirectory()) {
-            recursiveCopy(dir, name);
+        var fullSourcePath = path_1.default.join(sourceDirectory, file);
+        var fullTargetPath = path_1.default.join(targetDirectory, file);
+        if ((0, fs_1.statSync)(fullSourcePath).isDirectory()) {
+            (0, fs_1.mkdirSync)(fullTargetPath);
+            recursiveCopy(fullSourcePath, fullTargetPath, projectName);
         }
         else {
-            (0, fs_1.writeFileSync)(path_1.default.join(process.cwd(), name, file), (0, fs_1.readFileSync)(file, 'utf-8').replace('{{ name }}', name));
+            (0, fs_1.writeFileSync)(fullTargetPath, (0, fs_1.readFileSync)(fullSourcePath, 'utf-8').replace('{{ name }}', projectName));
         }
     }
 };
@@ -25,6 +28,6 @@ var init = function (_a) {
     // Create the directory
     (0, fs_1.mkdirSync)(name);
     // Copy the values from defaults
-    recursiveCopy(path_1.default.join(__dirname, 'defaults'), name);
+    recursiveCopy(path_1.default.join(__basedir, 'defaults'), path_1.default.join(process.cwd(), name), name);
 };
 exports.init = init;

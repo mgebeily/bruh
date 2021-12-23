@@ -64,6 +64,10 @@
     "forceConsistentCasingInFileNames": true,  /* Disallow inconsistently-cased references to the same file. */
     "skipLibCheck": true
   },
+  "watchOptions": {
+    "watchDirectory": "usefsevents",
+    "excludeDirectories": ["**/node_modules", "_build"]
+  },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts", "**/*.spec.tsx"]
 }

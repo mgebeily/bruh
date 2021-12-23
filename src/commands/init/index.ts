@@ -1,12 +1,16 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "fs"
 import path from "path";
 
-const recursiveCopy = (dir: string, name: string) => {
-  for(const file of readdirSync(dir)) {
-    if (statSync(file).isDirectory()) {
-      recursiveCopy(dir, name)
+const recursiveCopy = (sourceDirectory: string, targetDirectory: string, projectName: string) => {
+  for(const file of readdirSync(sourceDirectory)) {
+    const fullSourcePath = path.join(sourceDirectory, file);
+    const fullTargetPath = path.join(targetDirectory, file);
+
+    if (statSync(fullSourcePath).isDirectory()) {
+      mkdirSync(fullTargetPath);
+      recursiveCopy(fullSourcePath, fullTargetPath, projectName)
     } else {
-      writeFileSync(path.join(process.cwd(), name, file), readFileSync(file, 'utf-8').replace('{{ name }}', name))
+      writeFileSync(fullTargetPath, readFileSync(fullSourcePath, 'utf-8').replace('{{ name }}', projectName))
     }
   }
 }
@@ -20,5 +24,7 @@ export const init = ({ name }: { name: string}) => {
   mkdirSync(name)
 
   // Copy the values from defaults
-  recursiveCopy(path.join(__dirname, 'defaults'), name)
+  recursiveCopy(path.join(__basedir, 'defaults'), path.join(process.cwd(), name), name)
 }
+
+declare var __basedir: string;
